@@ -11,10 +11,11 @@ require 'fileutils'
 # PLAN OF ATTACK
 #
 # 1. Move all videos and photos from VIRB to removable HD
-# 2. Search which photo comes from which video (for each photo)
-# 3. Cut video around photo and save (for each photo)
-# 4. (nice to have) Add FIT information to video
-# 5. Move videos and photos to archive location
+# 2. For each photo:
+# 2a. Search to which video the photo belongs
+# 2b. Cut video around photo and save
+# 3. (nice to have) Add FIT information to video
+# 4. Move videos and photos to archive location
 
 VIRB_PATH = "/Volumes/Untitled"
 OUTPUT_PATH = "/Volumes/VIRB"
@@ -57,11 +58,11 @@ origin = File.join(VIRB_PATH, "DCIM/100_VIRB")
 tmp = File.join(OUTPUT_PATH, "tmp")
 move_media_files(origin, tmp)
 
-# 2. Search which photo comes from which video (for each photo)
+# 2. For each photo:
+# 2a. Search to which video the photo belongs
 # TODO
-
-# 3. Cut video around photo and save (for each photo)
-# As below. TODO: (for each photo)
+# 2b. Cut video around photo and save
+# As below. TODO
 
 photopath = "/Users/tomklaasen/Desktop/VIRB_copy/VIRB_0630.jpg"
 videopath = "/Users/tomklaasen/Desktop/VIRB_copy/VIRB_0629.MP4"
@@ -72,8 +73,8 @@ time_in_video = phototime - videostart
 
 cut_video(videopath, time_in_video - lead_time, duration, output_path) # TODO output_path is ignored
 
-# 4. (nice to have) Add FIT information to video
+# 3. (nice to have) Add FIT information to video
 # TODO
 
-# 5. Move videos and photos to archive location
+# 4. Move videos and photos to archive location
 # TODO
