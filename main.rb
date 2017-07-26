@@ -10,10 +10,6 @@ def retrieve_creation_time(photopath)
   File.birthtime(photopath)
 end
 
-def retrieve_exif_creation_time(photopath)
-  # TODO
-end
-
 def cut_video(path, start, duration, output_path)
   options = {:start => start, :duration => duration}
   Viddl::Video::Clip.process path, options
