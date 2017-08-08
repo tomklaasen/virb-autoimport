@@ -38,22 +38,6 @@ def move_media_files(origin, destination)
 
 end
 
-def retrieve_creation_time(path)
-  # File.birthtime(path)
-  medium = Medium.new(path)
-  medium.create_time
-end
-
-def cut_video(path, start, duration, output_path)
-  options = {:start => start, :duration => duration}
-  Viddl::Video::Clip.process path, options
-end
-
-lead_time = 15 # seconds before the photo
-duration = 30  # how long will the output video be (in seconds)
-
-output_path = "tmp"
-
 # EXECUTION
 
 # 1. Move all videos and photos from VIRB to removable HD
@@ -73,16 +57,9 @@ videopath = "/Users/tkla/Desktop/VIRB/VIRB-20170802/DCIM/100_VIRB/VIRB0652-7.MP4
 photo = Medium.new(photopath)
 video = Medium.new(videopath)
 
-puts "Photo was taken at #{photo.creation_time}"
-
-puts "Video was taken at #{video.creation_time}"
-puts "Video's length is #{video.duration} seconds"
-
-puts "Photo is part of video: #{photo.is_in?(video)}"
-
-# time_in_video = phototime - videostart
-#
-# cut_video(videopath, time_in_video - lead_time, duration, output_path) # TODO output_path is ignored
+if photo.is_in?(video)
+  video.cut_around(photo)
+end
 
 # 3. (nice to have) Add FIT information to video
 # TODO

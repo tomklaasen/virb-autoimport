@@ -2,7 +2,6 @@ class Medium
   require 'exif'
   require 'ffprober'
   require 'time'
-  require 'pp'
 
   def initialize(path)
     @path = path
@@ -10,15 +9,6 @@ class Medium
 
   def creation_time
     File.birthtime(@path)
-    # if @path.end_with?('.jpg')
-    #   pp File.birthtime(@path)
-    #   @data ||= Exif::Data.new(@path)
-    #   pp @data.date_time
-    #   @data.date_time.utc
-    # else
-    #   pp video_stream.tags[:creation_time]
-    #   Time.parse(video_stream.tags[:creation_time]).utc
-    # end
   end
 
   def is_in?(other)
@@ -31,11 +21,26 @@ class Medium
     end
   end
 
+  def cut_around(photo)
+    lead_time = 15 # seconds before the photo
+    duration = 30  # how long will the output video be (in seconds)
+
+    output_path = "tmp"
+
+    time_in_video = photo.creation_time - self.creation_time
+    cut_video(@path, time_in_video - lead_time, duration, output_path) # TODO output_path is ignored
+  end
+
   def duration
     video_stream.duration.to_i
   end
 
   private
+
+  def cut_video(path, start, duration, output_path)
+    options = {:start => start, :duration => duration}
+    Viddl::Video::Clip.process path, options
+  end
 
   def probe
     @probe ||= Ffprober::Parser.from_file(@path)
