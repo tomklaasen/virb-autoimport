@@ -49,9 +49,8 @@ Dir.glob(File.join(origin, '*.jpg')).each do |photopath|
   Dir.glob(File.join(origin, '*.MP4')).each do |videopath|
     video = Medium.new(videopath)
 
-    asterisk = photo.is_in?(video) ? "*" : " "
-    puts " Video #{videopath} #{asterisk}"
     if photo.is_in?(video)
+      puts "  found in video #{videopath}"
       video.cut_around(photo)
     end
   end

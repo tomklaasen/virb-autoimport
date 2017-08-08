@@ -45,7 +45,7 @@ class Medium
   private
 
   def cut_video(path, start, duration, output_path)
-    options = {:start => start, :duration => duration, :output_path => output_path}
+    options = {:start => start, :duration => duration, :output_path => output_path, :flags => "-loglevel error -hide_banner"}
     Viddl::Video::Clip.process path, options
   end
 
