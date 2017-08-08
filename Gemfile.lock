@@ -1,14 +1,20 @@
 GEM
   remote: http://rubygems.org/
   specs:
+    exif (1.0.1)
     ffmpeg (0.2.5)
+    ffprober (0.5.1)
+    mediainfo (0.7.2)
     viddl (0.0.13)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
+  exif
   ffmpeg
+  ffprober
+  mediainfo
   viddl
 
 BUNDLED WITH
