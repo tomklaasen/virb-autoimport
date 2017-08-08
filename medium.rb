@@ -2,6 +2,9 @@ class Medium
   require 'exif'
   require 'ffprober'
   require 'time'
+  require 'fileutils'
+
+  attr_reader :path
 
   def initialize(path)
     @path = path
@@ -22,13 +25,17 @@ class Medium
   end
 
   def cut_around(photo)
-    lead_time = 15 # seconds before the photo
-    duration = 30  # how long will the output video be (in seconds)
+    lead_time = 45 # seconds before the photo
+    duration = 60  # how long will the output video be (in seconds)
 
-    output_path = "tmp"
+    output_folder = "tmp"
+    FileUtils.mkdir_p(output_folder)
 
-    time_in_video = photo.creation_time - self.creation_time
-    cut_video(@path, time_in_video - lead_time, duration, output_path) # TODO output_path is ignored
+    output_path = File.join(output_folder, File.basename(photo.path, ".jpg"))
+
+    time_in_video = photo.creation_time - self.creation_time - lead_time
+    time_in_video = 0 if time_in_video < 0
+    cut_video(@path, time_in_video, duration, output_path) # TODO output_path is ignored
   end
 
   def duration
@@ -38,7 +45,7 @@ class Medium
   private
 
   def cut_video(path, start, duration, output_path)
-    options = {:start => start, :duration => duration}
+    options = {:start => start, :duration => duration, :output_path => output_path}
     Viddl::Video::Clip.process path, options
   end
 
