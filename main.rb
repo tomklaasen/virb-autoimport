@@ -53,7 +53,7 @@ end
 
 puts "Do you want to delete the source files? [yN]"
 do_delete = gets.chomp
-if do_delete in ['y', "Y"]
+if ['y', "Y"].include?(do_delete)
   # Delete source files
   Dir.glob(File.join(origin, '*')).each do |file|
     File.delete(file)
