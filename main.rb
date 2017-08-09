@@ -18,13 +18,12 @@ require_relative 'medium'
 # 3. (nice to have) Add FIT information to video
 # 4. Move videos and photos to archive location
 
-# VIRB_PATH = "/Volumes/Untitled"
-VIRB_PATH = "/Users/tkla/Desktop/VIRB/VIRB-20170802/"
+VIRB_PATH = "/Volumes/Untitled"
+# VIRB_PATH = "/Users/tkla/Desktop/VIRB/VIRB-20170802/"
 
-# EXECUTION
 origin = File.join(VIRB_PATH, "DCIM/100_VIRB")
 
-# Delete all .glv files
+# Delete all .glv files; we don't need those
 Dir.glob(File.join(origin, '*.glv')).each do |file|
   File.delete(file)
 end
@@ -48,9 +47,7 @@ end
 # 3. (nice to have) Add FIT information to video
 # TODO
 
-# 4. Move videos and photos to archive location
-# TODO
-
+# Delete source files
 puts "Do you want to delete the source files? [yN]"
 do_delete = gets.chomp
 if ['y', "Y"].include?(do_delete)
