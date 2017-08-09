@@ -6,6 +6,8 @@ class Medium
 
   attr_reader :path
 
+  OUTPUT_DIR = "/Users/tkla/Dropbox\ \(Personal\)/VIRB\ takeouts"
+
   def initialize(path)
     @path = path
   end
@@ -28,14 +30,18 @@ class Medium
     lead_time = 45 # seconds before the photo
     duration = 60  # how long will the output video be (in seconds)
 
-    output_folder = "tmp"
-    FileUtils.mkdir_p(output_folder)
+    FileUtils.mkdir_p(OUTPUT_DIR)
 
-    output_path = File.join(output_folder, File.basename(photo.path, ".jpg"))
+    output_path = "#{File.join(OUTPUT_DIR, File.basename(photo.path, ".jpg"))}"
 
-    time_in_video = photo.creation_time - self.creation_time - lead_time
-    time_in_video = 0 if time_in_video < 0
-    cut_video(@path, time_in_video, duration, output_path) # TODO output_path is ignored
+    if !File.exist?("#{output_path}.MP4")
+      puts "  creating clip..."
+      time_in_video = photo.creation_time - self.creation_time - lead_time
+      time_in_video = 0 if time_in_video < 0
+      cut_video(@path, time_in_video, duration, "'#{output_path}'")
+    else
+      puts "  clip already exists; skipping"
+    end
   end
 
   def duration

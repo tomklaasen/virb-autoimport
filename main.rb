@@ -18,30 +18,18 @@ require_relative 'medium'
 # 3. (nice to have) Add FIT information to video
 # 4. Move videos and photos to archive location
 
-VIRB_PATH = "/Users/tkla/Desktop/VIRB/VIRB-20170807"
-OUTPUT_PATH = "/Volumes/VIRB"
-
-# 1. Move all videos and photos from VIRB to removable HD
-def move_media_files(origin, destination)
-
-  # 1b. Move all videos and photos from VIRB to removable HD
-
-  FileUtils::mkdir_p destination
-
-  Dir.glob(File.join(origin, '*')).each do |file|
-    FileUtils.move file, File.join(destination, File.basename(file))
-  end
-
-end
+# VIRB_PATH = "/Volumes/Untitled"
+VIRB_PATH = "/Users/tkla/Desktop/VIRB/VIRB-20170802/"
 
 # EXECUTION
 origin = File.join(VIRB_PATH, "DCIM/100_VIRB")
 
-# 1a. Delete all .glv files
+# Delete all .glv files
 Dir.glob(File.join(origin, '*.glv')).each do |file|
   File.delete(file)
 end
 
+# For each photo, find the video in which it is, and cut the relevant part
 Dir.glob(File.join(origin, '*.jpg')).each do |photopath|
   puts "Photo #{photopath}"
   photo = Medium.new(photopath)
@@ -57,9 +45,13 @@ Dir.glob(File.join(origin, '*.jpg')).each do |photopath|
 end
 
 
-
 # 3. (nice to have) Add FIT information to video
 # TODO
 
 # 4. Move videos and photos to archive location
 # TODO
+
+# Delete source files
+Dir.glob(File.join(origin, '*')).each do |file|
+  # File.delete(file)
+end
