@@ -51,7 +51,11 @@ end
 # 4. Move videos and photos to archive location
 # TODO
 
-# Delete source files
-Dir.glob(File.join(origin, '*')).each do |file|
-  # File.delete(file)
+puts "Do you want to delete the source files? [yN]"
+do_delete = gets.chomp
+if do_delete in ['y', "Y"]
+  # Delete source files
+  Dir.glob(File.join(origin, '*')).each do |file|
+    File.delete(file)
+  end
 end
