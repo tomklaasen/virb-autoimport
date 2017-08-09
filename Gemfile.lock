@@ -1,10 +1,3 @@
-PATH
-  remote: ../fit
-  specs:
-    fit-parser (0.0.2)
-      activesupport (~> 4.2.0)
-      bindata (~> 2.1.0)
-
 GEM
   remote: http://rubygems.org/
   specs:
@@ -17,6 +10,9 @@ GEM
     exif (1.0.1)
     ffmpeg (0.2.5)
     ffprober (0.5.1)
+    fit-parser (0.0.2)
+      activesupport (~> 4.2.0)
+      bindata (~> 2.1.0)
     i18n (0.8.6)
     minitest (5.10.3)
     thread_safe (0.3.6)
@@ -31,7 +27,7 @@ DEPENDENCIES
   exif
   ffmpeg
   ffprober
-  fit-parser!
+  fit-parser
   viddl
 
 BUNDLED WITH
