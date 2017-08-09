@@ -18,7 +18,7 @@ require_relative 'medium'
 # 3. (nice to have) Add FIT information to video
 # 4. Move videos and photos to archive location
 
-VIRB_PATH = "/Users/tkla/Desktop/VIRB/VIRB-20170802"
+VIRB_PATH = "/Users/tkla/Desktop/VIRB/VIRB-20170807"
 OUTPUT_PATH = "/Volumes/VIRB"
 
 # 1. Move all videos and photos from VIRB to removable HD
@@ -56,25 +56,7 @@ Dir.glob(File.join(origin, '*.jpg')).each do |photopath|
   end
 end
 
-# 1. Move all videos and photos from VIRB to removable HD
-# tmp = File.join(OUTPUT_PATH, "tmp")
-# move_media_files(origin, tmp)
 
-# 2. For each photo:
-# 2a. Search to which video the photo belongs
-# TODO
-# 2b. Cut video around photo and save
-# As below. TODO
-
-photopath = "/Users/tkla/Desktop/VIRB/VIRB-20170802/DCIM/100_VIRB/VIRB0653.jpg"
-videopath = "/Users/tkla/Desktop/VIRB/VIRB-20170802/DCIM/100_VIRB/VIRB0652-7.MP4"
-
-photo = Medium.new(photopath)
-video = Medium.new(videopath)
-
-if photo.is_in?(video)
-  # video.cut_around(photo)
-end
 
 # 3. (nice to have) Add FIT information to video
 # TODO
