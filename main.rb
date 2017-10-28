@@ -1,58 +1,87 @@
-# Load the bundled environment
-require "rubygems"
-require "bundler/setup"
+class Main
 
-# Require gems specified in the Gemfile
-require "viddl"
-require "viddl/video/clip"
-require 'fileutils'
-require_relative 'medium'
+  # Load the bundled environment
+  require "rubygems"
+  require "bundler/setup"
+
+  # Require gems specified in the Gemfile
+  require "viddl"
+  require "viddl/video/clip"
+  require 'fileutils'
+
+  require_relative 'logging'
+  include Logging
+
+  require_relative 'medium'
+  require_relative 'fit_thing'
+
+  # VIRB_PATH = "/Volumes/Untitled"
+  VIRB_PATH = "/Users/tkla/Desktop/VIRB dump 20171027/"
+
+  def do_stuff
+
+    origin = File.join(VIRB_PATH, "DCIM/100_VIRB")
+
+    # Delete all .glv files; we don't need those
+    Dir.glob(File.join(origin, '*.glv')).each do |file|
+      File.delete(file)
+    end
 
 
-# PLAN OF ATTACK
-#
-# 1. Move all videos and photos from VIRB to removable HD
-# 2. For each photo:
-# 2a. Search to which video the photo belongs
-# 2b. Cut video around photo and save
-# 3. (nice to have) Add FIT information to video
-# 4. Move videos and photos to archive location
+    output_path, start_time, duration = "", Time.now, 0
 
-VIRB_PATH = "/Volumes/Untitled"
-# VIRB_PATH = "/Users/tkla/Desktop/VIRB/VIRB-20170802/"
+    # For each photo, find the video in which it is, and cut the relevant part
+    Dir.glob(File.join(origin, '*.jpg')).each do |photopath|
+      logger.info "Photo #{photopath}"
+      photo = Medium.new(photopath)
 
-origin = File.join(VIRB_PATH, "DCIM/100_VIRB")
+      Dir.glob(File.join(origin, '*.MP4')).each do |videopath|
+        video = Medium.new(videopath)
 
-# Delete all .glv files; we don't need those
-Dir.glob(File.join(origin, '*.glv')).each do |file|
-  File.delete(file)
-end
+        if photo.is_in?(video)
+          logger.info "  found in video #{videopath}"
+          output_path, start_time, duration = video.cut_around(photo)
+        end
 
-# For each photo, find the video in which it is, and cut the relevant part
-Dir.glob(File.join(origin, '*.jpg')).each do |photopath|
-  puts "Photo #{photopath}"
-  photo = Medium.new(photopath)
+      end
 
-  Dir.glob(File.join(origin, '*.MP4')).each do |videopath|
-    video = Medium.new(videopath)
+      logger.debug "photo time : #{photo.creation_time}"
+      logger.debug "output_path: #{output_path}"
+      logger.debug "start_time : #{start_time}"
+      logger.debug "duration   : #{duration}"
 
-    if photo.is_in?(video)
-      puts "  found in video #{videopath}"
-      video.cut_around(photo)
+      # Now, we need to find the right GMetrix
+      gmetrix_dir = File.join(VIRB_PATH, 'GMetrix')
+      gmetrix_file_path = nil
+      gmetrix_file_creation_time = Time.new(1980, 1,1,12,0,0)
+
+      Dir.glob(File.join(gmetrix_dir, "*.fit")).each do |fit_file_path|
+        birthtime = File.birthtime(fit_file_path)
+        if birthtime < photo.creation_time && birthtime > gmetrix_file_creation_time
+          gmetrix_file_path = fit_file_path
+          gmetrix_file_creation_time = birthtime
+        end
+      end
+
+      logger.debug "gmetrix_file_path : #{gmetrix_file_path}"
+
+      # Then, we generate the .srt file
+      FitThing.new.generate_srt(gmetrix_file_path, start_time, duration)
+
+      # And we add the subtitles from the .srt file to the video
+
+    end
+
+    # Delete source files
+    puts "Do you want to delete the source files? [yN]"
+    do_delete = gets.chomp
+    if ['y', "Y"].include?(do_delete)
+      # Delete source files
+      Dir.glob(File.join(origin, '*')).each do |file|
+        File.delete(file)
+      end
     end
   end
 end
 
-
-# 3. (nice to have) Add FIT information to video
-# TODO
-
-# Delete source files
-puts "Do you want to delete the source files? [yN]"
-do_delete = gets.chomp
-if ['y', "Y"].include?(do_delete)
-  # Delete source files
-  Dir.glob(File.join(origin, '*')).each do |file|
-    File.delete(file)
-  end
-end
+Main.new.do_stuff

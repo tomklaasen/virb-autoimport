@@ -26,6 +26,8 @@ class Medium
     end
   end
 
+  # Cuts the current video around the photo
+  # Returns path of the resulting video, the starting time of that video, and its duration
   def cut_around(photo)
     lead_time = 45 # seconds before the photo
     duration = 60  # how long will the output video be (in seconds)
@@ -33,15 +35,18 @@ class Medium
     FileUtils.mkdir_p(OUTPUT_DIR)
 
     output_path = "#{File.join(OUTPUT_DIR, File.basename(photo.path, ".jpg"))}"
+    start_time = photo.creation_time - lead_time
 
     if !File.exist?("#{output_path}.MP4")
       puts "  creating clip..."
-      time_in_video = photo.creation_time - self.creation_time - lead_time
+      time_in_video = start_time - self.creation_time
       time_in_video = 0 if time_in_video < 0
       cut_video(@path, time_in_video, duration, "'#{output_path}'")
     else
       puts "  clip already exists; skipping"
     end
+
+    return output_path, start_time, duration
   end
 
   def duration
