@@ -14,8 +14,8 @@ class Main
   require_relative 'fit_thing'
   require_relative 'subtitle_adder'
 
-  # VIRB_PATH = "/Volumes/Untitled"
-  VIRB_PATH = "/Users/tkla/Desktop/VIRB dump 20171027/"
+  VIRB_PATH = "/Volumes/Untitled"
+  # VIRB_PATH = "/Users/tkla/Desktop/VIRB dump 20171027/"
 
   def do_stuff
 
