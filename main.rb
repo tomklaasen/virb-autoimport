@@ -45,7 +45,7 @@ class Main
 
     # Delete source files
     puts "Do you want to delete the source files? [yN]"
-    do_delete = gets.chomp
+    do_delete = STDIN.gets.chomp
     if ['y', "Y"].include?(do_delete)
       # Delete source files
       Dir.glob(File.join(origin, '*')).each do |file|
