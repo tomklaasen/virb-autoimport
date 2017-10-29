@@ -14,7 +14,6 @@ class Main
   require_relative 'video'
   require_relative 'fit_thing'
 
-
   def initialize
     environment = ARGV[0] || 'production'
     logger.debug "environment: #{environment}"

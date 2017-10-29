@@ -138,5 +138,4 @@ class Video
     output
   end
 
-
 end
