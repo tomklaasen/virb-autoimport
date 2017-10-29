@@ -8,7 +8,7 @@ class Video
 
   OUTPUT_DIR = "/Users/tkla/Dropbox\ \(Personal\)/VIRB\ takeouts"
   LEADTIME = 45  # seconds before the photo
-  DURATION = 2  # how long will the output video be (in seconds)
+  DURATION = 60  # how long will the output video be (in seconds)
 
   def initialize(videopath, photopath, gmetrix_dir)
     @videopath = videopath

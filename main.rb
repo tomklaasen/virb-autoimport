@@ -13,8 +13,8 @@ class Main
   require_relative 'video'
   require_relative 'fit_thing'
 
-  # VIRB_PATH = "/Volumes/Untitled"
-  VIRB_PATH = "/Users/tkla/Desktop/VIRB dump 20171027/"
+  VIRB_PATH = "/Volumes/Untitled"
+  # VIRB_PATH = "/Users/tkla/Desktop/VIRB dump 20171027/"
 
   def do_stuff
 
