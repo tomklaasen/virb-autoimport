@@ -8,7 +8,7 @@ class Video
 
   OUTPUT_DIR = "/Users/tkla/Dropbox\ \(Personal\)/VIRB\ takeouts"
   LEADTIME = 45  # seconds before the photo
-  DURATION = 60  # how long will the output video be (in seconds)
+  DURATION = 2  # how long will the output video be (in seconds)
 
   def initialize(videopath, photopath, gmetrix_dir)
     @videopath = videopath
@@ -42,7 +42,7 @@ class Video
       cut_around
 
       # And we add the subtitles from the .srt file to the video
-      SubtitleAdder.new.add_subtitles("#{output_path}.MP4", speeds_subtitles_path)
+      add_subtitles("#{output_path}.MP4", speeds_subtitles_path)
 
       FileUtils.rm "#{output_path}.MP4"
       FileUtils.mv "subtitled.MP4", "#{output_path}.MP4"
@@ -54,6 +54,17 @@ class Video
   end
 
   private
+
+  def add_subtitles(video_path, subtitles_path)
+    video = escape_path_for_command_line(video_path)
+    subtitles = escape_path_for_command_line(subtitles_path)
+    flags = "-loglevel error -hide_banner"
+    command = "ffmpeg -i #{video} #{flags} -vf subtitles=#{subtitles}:force_style='Alignment=7' subtitled.MP4"
+    logger.debug "Issuing command: #{command}"
+    system command
+    FileUtils.rm subtitles_path
+  end
+
 
   # Cuts the current video around the photo
   def cut_around
