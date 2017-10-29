@@ -10,7 +10,7 @@ class Video
 
   OUTPUT_DIR = "/Users/tkla/Dropbox\ \(Personal\)/VIRB\ takeouts"
   LEADTIME = 45  # seconds before the photo
-  DURATION = 60  # how long will the output video be (in seconds)
+  DURATION = 2  # how long will the output video be (in seconds)
 
   def initialize(videopath, photopath, gmetrix_dir)
     @path = videopath
@@ -18,7 +18,7 @@ class Video
     @gmetrix_dir = gmetrix_dir
   end
 
-  def creation_time
+  def video_creation_time
     File.birthtime(@path)
   end
 
@@ -27,10 +27,9 @@ class Video
   end
 
   def contains_photo?
-    photo_creation_time = File.birthtime(@photopath)
-    if photo_creation_time < self.creation_time
+    if photo_creation_time < video_creation_time
       return false
-    elsif photo_creation_time > self.creation_time + self.duration.to_i
+    elsif photo_creation_time > video_creation_time + self.duration.to_i
       return false
     else
       return true
@@ -78,7 +77,7 @@ class Video
 
     if !File.exist?("#{output_path}.MP4")
       logger.info "  creating clip..."
-      time_in_video = start_time - self.creation_time
+      time_in_video = start_time - video_creation_time
       time_in_video = 0 if time_in_video < 0
       cut_video(@path, time_in_video, DURATION, "#{output_path}")
     else
