@@ -1,4 +1,0 @@
-duration: 60   # how long will the output video be (in seconds)
-leadtime: 45  # seconds before the photo
-output_dir: /Users/tkla/Dropbox (Personal)/VIRB takeouts
-virb_path: /Volumes/Untitled

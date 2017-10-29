@@ -1,0 +1,5 @@
+output_dir: YOUR_OUTPUT_DIR # Output will be written in this directory
+virb_path: YOUR_INPUT_DIR   # Input files will be taken from this directory
+
+duration: 60   # how long will the output video be (in seconds)
+leadtime: 45  # seconds before the photo
