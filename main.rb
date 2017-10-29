@@ -5,8 +5,6 @@ class Main
   require "bundler/setup"
 
   # Require gems specified in the Gemfile
-  require "viddl"
-  require "viddl/video/clip"
   require 'fileutils'
 
   require_relative 'logging'
@@ -14,6 +12,7 @@ class Main
 
   require_relative 'medium'
   require_relative 'fit_thing'
+  require_relative 'subtitle_adder'
 
   # VIRB_PATH = "/Volumes/Untitled"
   VIRB_PATH = "/Users/tkla/Desktop/VIRB dump 20171027/"
@@ -41,35 +40,33 @@ class Main
         if photo.is_in?(video)
           logger.info "  found in video #{videopath}"
           output_path, start_time, duration = video.cut_around(photo)
+          logger.debug "photo time : #{photo.creation_time}"
+          logger.debug "output_path: #{output_path}"
+          logger.debug "start_time : #{start_time}"
+          logger.debug "duration   : #{duration}"
+
+          # Now, we need to find the right GMetrix
+          gmetrix_dir = File.join(VIRB_PATH, 'GMetrix')
+          gmetrix_file_path = nil
+          gmetrix_file_creation_time = Time.new(1980, 1,1,12,0,0)
+
+          Dir.glob(File.join(gmetrix_dir, "*.fit")).each do |fit_file_path|
+            birthtime = File.birthtime(fit_file_path)
+            if birthtime < photo.creation_time && birthtime > gmetrix_file_creation_time
+              gmetrix_file_path = fit_file_path
+              gmetrix_file_creation_time = birthtime
+            end
+          end
+
+          logger.debug "gmetrix_file_path : #{gmetrix_file_path}"
+
+          # Then, we generate the .srt file
+          speeds_subtitles_path = FitThing.new.generate_srt(gmetrix_file_path, start_time, duration)
+
+          # And we add the subtitles from the .srt file to the video
+          SubtitleAdder.new.add_subtitles("#{output_path}.MP4", speeds_subtitles_path)
         end
-
       end
-
-      logger.debug "photo time : #{photo.creation_time}"
-      logger.debug "output_path: #{output_path}"
-      logger.debug "start_time : #{start_time}"
-      logger.debug "duration   : #{duration}"
-
-      # Now, we need to find the right GMetrix
-      gmetrix_dir = File.join(VIRB_PATH, 'GMetrix')
-      gmetrix_file_path = nil
-      gmetrix_file_creation_time = Time.new(1980, 1,1,12,0,0)
-
-      Dir.glob(File.join(gmetrix_dir, "*.fit")).each do |fit_file_path|
-        birthtime = File.birthtime(fit_file_path)
-        if birthtime < photo.creation_time && birthtime > gmetrix_file_creation_time
-          gmetrix_file_path = fit_file_path
-          gmetrix_file_creation_time = birthtime
-        end
-      end
-
-      logger.debug "gmetrix_file_path : #{gmetrix_file_path}"
-
-      # Then, we generate the .srt file
-      FitThing.new.generate_srt(gmetrix_file_path, start_time, duration)
-
-      # And we add the subtitles from the .srt file to the video
-
     end
 
     # Delete source files

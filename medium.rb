@@ -1,4 +1,6 @@
 class Medium
+  include Logging
+
   require 'exif'
   require 'ffprober'
   require 'time'
@@ -38,12 +40,12 @@ class Medium
     start_time = photo.creation_time - lead_time
 
     if !File.exist?("#{output_path}.MP4")
-      puts "  creating clip..."
+      logger.info "  creating clip..."
       time_in_video = start_time - self.creation_time
       time_in_video = 0 if time_in_video < 0
-      cut_video(@path, time_in_video, duration, "'#{output_path}'")
+      cut_video(@path, time_in_video, duration, "#{output_path}")
     else
-      puts "  clip already exists; skipping"
+      logger.warn "  clip '#{"#{output_path}.MP4"}' already exists; skipping"
     end
 
     return output_path, start_time, duration
@@ -56,8 +58,11 @@ class Medium
   private
 
   def cut_video(path, start, duration, output_path)
-    options = {:start => start, :duration => duration, :output_path => output_path, :flags => "-loglevel error -hide_banner"}
-    Viddl::Video::Clip.process path, options
+    flags = "-loglevel error -hide_banner"
+    arguments = "-ss #{start} -t #{duration}"
+    command = "ffmpeg -i #{escape_path_for_command_line(path)} #{flags} #{arguments} #{escape_path_for_command_line(output_path)}.MP4"
+    logger.debug "Issuing command: #{command}"
+    system command
   end
 
   def probe
@@ -67,5 +72,13 @@ class Medium
   def video_stream
     probe.video_streams[0]
   end
+
+  def escape_path_for_command_line(path)
+    output = path.gsub(' ', '\ ')
+    output.gsub!('(', '\(')
+    output.gsub!(')', '\)')
+    output
+  end
+
 
 end

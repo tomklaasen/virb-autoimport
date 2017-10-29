@@ -1,7 +1,3 @@
-# Load the bundled environment
-require "rubygems"
-require "bundler/setup"
-
 # Require gems specified in the Gemfile
 require 'fit'
 require 'json'
@@ -11,6 +7,8 @@ class FitThing
   include Logging
 
   def generate_srt(gmetrix_file_path, start_time, duration)
+    output_path = 'speeds.srt'
+
     # logger.debug "gmetrix_file_path     : #{gmetrix_file_path}"
     # logger.debug "start_time            : #{start_time}"
     # logger.debug "duration              : #{duration}"
@@ -19,7 +17,7 @@ class FitThing
     end_time = start_time + duration
 
     counter = 0
-    File.open("speeds.srt", 'w') do  |file|
+    File.open(output_path, 'w') do  |file|
       fit_file = Fit.load_file(gmetrix_file_path)
       records = fit_file.records
       records.each do |r|
@@ -51,6 +49,7 @@ class FitThing
         end
       end
     end
+    return output_path
   end
 
   def self.counter_to_time_string(counter)
