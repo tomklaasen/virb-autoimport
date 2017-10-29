@@ -25,8 +25,6 @@ class Main
       File.delete(file)
     end
 
-
-
     gmetrix_dir = File.join(VIRB_PATH, 'GMetrix')
 
     # For each photo, find the video in which it is, and cut the relevant part

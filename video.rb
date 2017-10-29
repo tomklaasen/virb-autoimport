@@ -36,13 +36,13 @@ class Video
       logger.debug "gmetrix_file_path : #{gmetrix_file_path}"
 
       # Then, we generate the .srt file
-      speeds_subtitles_path = FitThing.new.generate_srt(gmetrix_file_path, start_time, DURATION)
+      @subtitles_path = FitThing.new.generate_srt(gmetrix_file_path, start_time, DURATION)
 
       # Cut the video
       cut_around
 
       # And we add the subtitles from the .srt file to the video
-      add_subtitles("#{output_path}.MP4", speeds_subtitles_path)
+      add_subtitles("#{output_path}.MP4")
 
       FileUtils.rm "#{output_path}.MP4"
       FileUtils.mv "subtitled.MP4", "#{output_path}.MP4"
@@ -55,16 +55,15 @@ class Video
 
   private
 
-  def add_subtitles(video_path, subtitles_path)
+  def add_subtitles(video_path)
     video = escape_path_for_command_line(video_path)
-    subtitles = escape_path_for_command_line(subtitles_path)
+    subtitles = escape_path_for_command_line(@subtitles_path)
     flags = "-loglevel error -hide_banner"
     command = "ffmpeg -i #{video} #{flags} -vf subtitles=#{subtitles}:force_style='Alignment=7' subtitled.MP4"
     logger.debug "Issuing command: #{command}"
     system command
-    FileUtils.rm subtitles_path
+    FileUtils.rm @subtitles_path
   end
-
 
   # Cuts the current video around the photo
   def cut_around
@@ -81,9 +80,11 @@ class Video
   end
 
   def cut_video(path, start)
+    video = escape_path_for_command_line(path)
+    output = "#{escape_path_for_command_line(output_path)}.MP4"
     flags = "-loglevel error -hide_banner"
     arguments = "-ss #{start} -t #{DURATION}"
-    command = "ffmpeg -i #{escape_path_for_command_line(path)} #{flags} #{arguments} #{escape_path_for_command_line(output_path)}.MP4"
+    command = "ffmpeg -i #{video} #{flags} #{arguments} #{output}"
     logger.debug "Issuing command: #{command}"
     system command
   end
