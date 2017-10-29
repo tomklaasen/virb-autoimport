@@ -6,20 +6,18 @@ class Video
   require 'time'
   require 'fileutils'
 
-  attr_reader :path
-
   OUTPUT_DIR = "/Users/tkla/Dropbox\ \(Personal\)/VIRB\ takeouts"
   LEADTIME = 45  # seconds before the photo
   DURATION = 2  # how long will the output video be (in seconds)
 
   def initialize(videopath, photopath, gmetrix_dir)
-    @path = videopath
+    @videopath = videopath
     @photopath = photopath
     @gmetrix_dir = gmetrix_dir
   end
 
   def video_creation_time
-    File.birthtime(@path)
+    File.birthtime(@videopath)
   end
 
   def photo_creation_time
@@ -39,7 +37,7 @@ class Video
   def process
 
     if contains_photo?
-      logger.info "  found in video #{@path}"
+      logger.info "  found in video #{@videopath}"
       output_path, start_time, duration = cut_around
 
       # Now, we need to find the right GMetrix
@@ -79,7 +77,7 @@ class Video
       logger.info "  creating clip..."
       time_in_video = start_time - video_creation_time
       time_in_video = 0 if time_in_video < 0
-      cut_video(@path, time_in_video, DURATION, "#{output_path}")
+      cut_video(@videopath, time_in_video, DURATION, "#{output_path}")
     else
       logger.warn "  clip '#{"#{output_path}.MP4"}' already exists; skipping"
     end
@@ -102,7 +100,7 @@ class Video
   end
 
   def probe
-    @probe ||= Ffprober::Parser.from_file(@path)
+    @probe ||= Ffprober::Parser.from_file(@videopath)
   end
 
   def video_stream
