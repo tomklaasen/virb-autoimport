@@ -6,10 +6,6 @@ class Video
   require 'time'
   require 'fileutils'
 
-  OUTPUT_DIR = "/Users/tkla/Dropbox\ \(Personal\)/VIRB\ takeouts"
-  LEADTIME = 45  # seconds before the photo
-  DURATION = 60  # how long will the output video be (in seconds)
-
   def initialize(videopath, photopath, gmetrix_dir)
     @videopath = videopath
     @photopath = photopath
@@ -36,7 +32,7 @@ class Video
       logger.debug "gmetrix_file_path : #{gmetrix_file_path}"
 
       # Then, we generate the .srt file
-      @subtitles_path = FitThing.new.generate_srt(gmetrix_file_path, start_time, DURATION)
+      @subtitles_path = FitThing.new.generate_srt(gmetrix_file_path, start_time, output_duration)
 
       # Cut the video
       cut_around
@@ -67,7 +63,7 @@ class Video
 
   # Cuts the current video around the photo
   def cut_around
-    FileUtils.mkdir_p(OUTPUT_DIR)
+    FileUtils.mkdir_p(output_dir)
 
     if !File.exist?("#{output_path}.MP4")
       logger.info "  creating clip..."
@@ -83,7 +79,7 @@ class Video
     video = escape_path_for_command_line(path)
     output = "#{escape_path_for_command_line(output_path)}.MP4"
     flags = "-loglevel error -hide_banner"
-    arguments = "-ss #{start} -t #{DURATION}"
+    arguments = "-ss #{start} -t #{output_duration}"
     command = "ffmpeg -i #{video} #{flags} #{arguments} #{output}"
     logger.debug "Issuing command: #{command}"
     system command
@@ -116,11 +112,23 @@ class Video
   end
 
   def output_path
-    @output_path ||= "#{File.join(OUTPUT_DIR, File.basename(@photopath, ".jpg"))}"
+    @output_path ||= "#{File.join(output_dir, File.basename(@photopath, ".jpg"))}"
   end
 
   def start_time
-    @start_time ||= File.birthtime(@photopath) - LEADTIME
+    @start_time ||= File.birthtime(@photopath) - leadtime
+  end
+
+  def output_duration
+    Settings.duration
+  end
+
+  def leadtime
+    Settings.leadtime
+  end
+
+  def output_dir
+    Settings.output_dir
   end
 
   def escape_path_for_command_line(path)

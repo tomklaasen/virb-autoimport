@@ -6,6 +6,7 @@ class Main
 
   # Require gems specified in the Gemfile
   require 'fileutils'
+  require 'config'
 
   require_relative 'logging'
   include Logging
@@ -13,19 +14,17 @@ class Main
   require_relative 'video'
   require_relative 'fit_thing'
 
-  VIRB_PATH = "/Volumes/Untitled"
-  # VIRB_PATH = "/Users/tkla/Desktop/VIRB dump 20171027/"
-
   def do_stuff
+    Config.load_and_set_settings(Config.setting_files("config", "development"))
 
-    origin = File.join(VIRB_PATH, "DCIM/100_VIRB")
+    origin = File.join(virb_path, "DCIM/100_VIRB")
 
     # Delete all .glv files; we don't need those
     Dir.glob(File.join(origin, '*.glv')).each do |file|
       File.delete(file)
     end
 
-    gmetrix_dir = File.join(VIRB_PATH, 'GMetrix')
+    gmetrix_dir = File.join(virb_path, 'GMetrix')
 
     # For each photo, find the video in which it is, and cut the relevant part
     Dir.glob(File.join(origin, '*.jpg')).each do |photopath|
@@ -46,6 +45,10 @@ class Main
         File.delete(file)
       end
     end
+  end
+
+  def virb_path
+    Settings.virb_path
   end
 end
 
