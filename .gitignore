@@ -1,4 +1,5 @@
 vendor/ruby
+vendor/cache
 tmp
 subtitled.MP4
 speeds.srt
