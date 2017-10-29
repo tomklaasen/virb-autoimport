@@ -4,3 +4,4 @@ tmp
 subtitled.MP4
 speeds.srt
 config/settings/*.local.yml
+Gemfile.lock
