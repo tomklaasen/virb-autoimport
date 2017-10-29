@@ -14,8 +14,15 @@ class Main
   require_relative 'video'
   require_relative 'fit_thing'
 
+
+  def initialize
+    environment = ARGV[0] || 'production'
+    logger.debug "environment: #{environment}"
+    Config.load_and_set_settings(Config.setting_files("config", environment))
+  end
+
   def do_stuff
-    Config.load_and_set_settings(Config.setting_files("config", "development"))
+    logger.debug "Duration:: #{Settings.duration}"
 
     origin = File.join(virb_path, "DCIM/100_VIRB")
 
