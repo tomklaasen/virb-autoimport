@@ -8,8 +8,9 @@ class SubtitleAdder
     video = escape_path_for_command_line(video_path)
     subtitles = escape_path_for_command_line(subtitles_path)
     flags = "-loglevel error -hide_banner"
-
-    system "ffmpeg -i #{video} -vf #{flags} subtitles=#{subtitles}:force_style='Alignment=7' subtitled.MP4"
+    command = "ffmpeg -i #{video} #{flags} -vf subtitles=#{subtitles}:force_style='Alignment=7' subtitled.MP4"
+    logger.debug "Issuing command: #{command}"
+    system command
   end
 
   def escape_path_for_command_line(path)

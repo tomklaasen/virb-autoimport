@@ -65,6 +65,9 @@ class Main
 
           # And we add the subtitles from the .srt file to the video
           SubtitleAdder.new.add_subtitles("#{output_path}.MP4", speeds_subtitles_path)
+
+          FileUtils.rm "#{output_path}.MP4"
+          FileUtils.mv "subtitled.MP4", "#{output_path}.MP4"
         end
       end
     end
