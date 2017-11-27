@@ -16,8 +16,8 @@ class Main
 
   def initialize
     environment = ARGV[0] || 'production'
-    logger.debug "environment: #{environment}"
     Config.load_and_set_settings(Config.setting_files("config", environment))
+    logger.debug "environment: #{environment}"
   end
 
   def do_stuff
