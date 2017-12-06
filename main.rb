@@ -32,14 +32,23 @@ class Main
 
     gmetrix_dir = File.join(virb_path, 'GMetrix')
 
+    photos_count = Dir.glob(File.join(origin, '*.jpg')).count
+    logger.info "Processing #{photos_count} situations"
+
+    started_at = Time.now
+
     # For each photo, find the video in which it is, and cut the relevant part
-    Dir.glob(File.join(origin, '*.jpg')).each do |photopath|
-      logger.info "Photo #{photopath}"
+    Dir.glob(File.join(origin, '*.jpg')).each_with_index do |photopath, index|
+      logger.info "Photo #{index + 1}/#{photos_count}: #{photopath}"
 
       Dir.glob(File.join(origin, '*.MP4')).each do |videopath|
         video = Video.new(videopath, photopath, gmetrix_dir)
         video.process
       end
+
+      time_spent = Time.now - started_at
+      logger.info "Photo #{index + 1}/#{photos_count} processed. Time spent: #{time_spent}s (that's #{time_spent / (index +1)}s / photo)"
+
     end
 
     # Delete source files
