@@ -23,7 +23,7 @@ class Main
   def do_stuff
     logger.debug "Duration:: #{Settings.duration}"
 
-    origin = File.join(virb_path, "DCIM/100_VIRB")
+    origin = File.join(virb_path, "DCIM/101_VIRB")
 
     # Delete all .glv files; we don't need those
     Dir.glob(File.join(origin, '*.glv')).each do |file|
@@ -39,12 +39,15 @@ class Main
 
     # For each photo, find the video in which it is, and cut the relevant part
     Dir.glob(File.join(origin, '*.jpg')).each_with_index do |photopath, index|
+      logger.info "*****************************"
       logger.info "Photo #{index + 1}/#{photos_count}: #{photopath}"
 
       Dir.glob(File.join(origin, '*.MP4')).each do |videopath|
         video = Video.new(videopath, photopath, gmetrix_dir)
         video.process
       end
+
+      File.rename(photopath, "#{photopath}.processed")
 
       time_spent = Time.now - started_at
       logger.info "Photo #{index + 1}/#{photos_count} processed. Time spent: #{time_spent}s (that's #{time_spent / (index +1)}s / photo)"
