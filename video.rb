@@ -1,10 +1,17 @@
+# Load the bundled environment
+require "rubygems"
+require "bundler/setup"
+
+
 class Video
+  require_relative 'logging'
   include Logging
 
-  require 'exif'
+  # require 'exif'
   require 'ffprober'
   require 'time'
   require 'fileutils'
+  require 'mediainfo'
 
   def initialize(videopath, photopath, gmetrix_dir)
     @videopath = videopath
@@ -22,17 +29,17 @@ class Video
       gmetrix_file_creation_time = Time.new(1980, 1,1,12,0,0)
 
       Dir.glob(File.join(@gmetrix_dir, "*.fit")).each do |fit_file_path|
-        birthtime = File.birthtime(fit_file_path)
-        if birthtime < photo_creation_time && birthtime > gmetrix_file_creation_time
+        creation_time = fit_creation_time(fit_file_path)
+        if creation_time < photo_creation_time && creation_time > gmetrix_file_creation_time
           gmetrix_file_path = fit_file_path
-          gmetrix_file_creation_time = birthtime
+          gmetrix_file_creation_time = creation_time
         end
       end
 
       logger.debug "gmetrix_file_path : #{gmetrix_file_path}"
 
       # Then, we generate the .srt file
-      @subtitles_path = FitThing.new.generate_srt(gmetrix_file_path, start_time, output_duration)
+      @subtitles_path = FitThing.new(gmetrix_file_path).generate_srt(start_time, output_duration)
 
       # Cut the video
       cut_around
@@ -94,11 +101,19 @@ class Video
   end
 
   def video_creation_time
-    File.birthtime(@videopath)
+    # File.birthtime(@videopath)
+    media_info = MediaInfo.from(@videopath)
+    Time.at(media_info.video.encoded_date)
   end
 
   def photo_creation_time
-    File.birthtime(@photopath)
+    # File.birthtime(@photopath)
+    ExifThing.new(@photopath).creation_time
+  end
+
+  def fit_creation_time(fit_file_path)
+    # File.birthtime(fit_file_path)
+    FitThing.new(fit_file_path).creation_time
   end
 
   def contains_photo?
@@ -116,7 +131,7 @@ class Video
   end
 
   def start_time
-    @start_time ||= File.birthtime(@photopath) - leadtime
+    @start_time ||= photo_creation_time - leadtime
   end
 
   def output_duration
@@ -139,3 +154,5 @@ class Video
   end
 
 end
+
+# puts Video.new('sample data/VIRB0782-2.MP4', 'sample data/VIRB0784.jpg', 'sample data').creation_time
