@@ -26,7 +26,7 @@ class ExifThing
 
 	def creation_time
 		data = get_data
-		puts data.date_time
+		# puts data.date_time
 		parse data.date_time
 	end
 end
