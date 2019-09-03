@@ -104,13 +104,12 @@ class Video
 
   def video_creation_time
     # File.birthtime(@videopath)
-    media_info = MediaInfo.from(@videopath)
-    Time.at(media_info.video.encoded_date)
+    @video_creation_time = @video_creation_time || Time.at(MediaInfo.from(@videopath).video.encoded_date)
   end
 
   def photo_creation_time
     # File.birthtime(@photopath)
-    ExifThing.new(@photopath).creation_time
+    @photo_creation_time = @photo_creation_time || ExifThing.new(@photopath).creation_time
   end
 
   def fit_creation_time(fit_file_path)

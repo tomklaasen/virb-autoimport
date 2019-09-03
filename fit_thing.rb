@@ -103,6 +103,7 @@ class FitThing
 
         end
     end
+    return nil
 
   end
 
