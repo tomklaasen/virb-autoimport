@@ -7,6 +7,8 @@ class Video
   require_relative 'logging'
   include Logging
 
+  require_relative 'exif_thing'
+
   # require 'exif'
   require 'ffprober'
   require 'time'
