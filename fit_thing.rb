@@ -89,10 +89,7 @@ class FitThing
   def creation_time
     fit_file = Fit.load_file(@gmetrix_file_path)
     records = fit_file.records
-    puts records.count
     records.each do |r|
-        puts r.header
-        puts r.content
         header = r.header
 
         # Look for the GPS messages
