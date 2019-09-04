@@ -89,7 +89,10 @@ class FitThing
   def creation_time
     fit_file = Fit.load_file(@gmetrix_file_path)
     records = fit_file.records
+    puts records.count
     records.each do |r|
+        puts r.header
+        puts r.content
         header = r.header
 
         # Look for the GPS messages
@@ -109,4 +112,4 @@ class FitThing
 
 end
 
-# puts FitThing.new('sample data/2019-08-07-08-19-39.fit').creation_time
+puts FitThing.new('sample data/2019-05-08-08-08-30.fit').creation_time

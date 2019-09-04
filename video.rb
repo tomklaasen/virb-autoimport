@@ -32,7 +32,7 @@ class Video
 
       Dir.glob(File.join(@gmetrix_dir, "*.fit")).each do |fit_file_path|
         creation_time = fit_creation_time(fit_file_path)
-        if creation_time < photo_creation_time && creation_time > gmetrix_file_creation_time
+        if creation_time && creation_time < photo_creation_time && creation_time > gmetrix_file_creation_time
           gmetrix_file_path = fit_file_path
           gmetrix_file_creation_time = creation_time
         end
@@ -41,16 +41,20 @@ class Video
       logger.debug "gmetrix_file_path : #{gmetrix_file_path}"
 
       # Then, we generate the .srt file
-      @subtitles_path = FitThing.new(gmetrix_file_path).generate_srt(start_time, output_duration)
+      if gmetrix_file_path
+        @subtitles_path = FitThing.new(gmetrix_file_path).generate_srt(start_time, output_duration) 
+      end
 
       # Cut the video
       cut_around
 
-      # And we add the subtitles from the .srt file to the video
-      add_subtitles("#{output_path}.MP4")
+      if gmetrix_file_path
+        # And we add the subtitles from the .srt file to the video
+        add_subtitles("#{output_path}.MP4")
 
-      FileUtils.rm "#{output_path}.MP4"
-      FileUtils.mv "subtitled.MP4", "#{output_path}.MP4"
+        FileUtils.rm "#{output_path}.MP4"
+        FileUtils.mv "subtitled.MP4", "#{output_path}.MP4"
+      end
     end
   end
 
