@@ -7,17 +7,22 @@ require "bundler/setup"
 require 'fit'
 require 'json'
 require 'time'
+require 'fileutils'
 
 class FitThing
   require_relative 'logging'
   include Logging
 
-  def initialize(file_path)
+
+  def initialize(file_path, output_directory)
     @gmetrix_file_path = file_path
+    @output_directory = output_directory
   end
 
   def generate_srt(start_time, duration)
-    output_path = File.join('tmp','speeds.srt')
+    tmp_dir = File.join(@output_directory, 'tmp')
+    FileUtils.mkdir_p(tmp_dir)
+    output_path = File.join(tmp_dir,'speeds.srt')
 
     # logger.debug "gmetrix_file_path     : #{@gmetrix_file_path}"
     # logger.debug "start_time            : #{start_time}"
