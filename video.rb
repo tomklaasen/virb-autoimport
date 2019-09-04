@@ -42,7 +42,7 @@ class Video
 
       # Then, we generate the .srt file
       if gmetrix_file_path
-        @subtitles_path = FitThing.new(gmetrix_file_path).generate_srt(start_time, output_duration) 
+        @subtitles_path = FitThing.new(gmetrix_file_path).generate_srt(start_time, output_duration, output_dir) 
       end
 
       # Cut the video

@@ -14,13 +14,12 @@ class FitThing
   include Logging
 
 
-  def initialize(file_path, output_directory)
+  def initialize(file_path)
     @gmetrix_file_path = file_path
-    @output_directory = output_directory
   end
 
-  def generate_srt(start_time, duration)
-    tmp_dir = File.join(@output_directory, 'tmp')
+  def generate_srt(start_time, duration, output_directory)
+    tmp_dir = File.join(output_directory, 'tmp')
     FileUtils.mkdir_p(tmp_dir)
     output_path = File.join(tmp_dir,'speeds.srt')
 
