@@ -53,7 +53,7 @@ class Video
         add_subtitles("#{output_path}.MP4")
 
         FileUtils.rm "#{output_path}.MP4"
-        FileUtils.mv "subtitled.MP4", "#{output_path}.MP4"
+        FileUtils.mv subtitled_path, "#{output_path}.MP4"
       end
     end
   end
@@ -68,7 +68,7 @@ class Video
     video = escape_path_for_command_line(video_path)
     subtitles = escape_path_for_command_line(@subtitles_path)
     flags = "-loglevel error -hide_banner"
-    command = "ffmpeg -i #{video} #{flags} -vf subtitles=#{subtitles}:force_style='Alignment=7' subtitled.MP4"
+    command = "ffmpeg -i #{video} #{flags} -vf subtitles=#{subtitles}:force_style='Alignment=7' #{subtitled_path}"
     logger.debug "Issuing command: #{command}"
     system command
     FileUtils.rm @subtitles_path
@@ -149,6 +149,16 @@ class Video
 
   def output_dir
     Settings.output_dir
+  end
+
+  def subtitled_path
+    unless @subtitled_path
+      tmp_dir = File.join(output_dir, 'tmp')
+      FileUtils.mkdir_p(tmp_dir)
+      output_path = File.join(tmp_dir,'subtitled.mp4')
+    end
+
+    @subtitled_path 
   end
 
   def escape_path_for_command_line(path)
