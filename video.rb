@@ -155,7 +155,7 @@ class Video
     unless @subtitled_path
       tmp_dir = File.join(output_dir, 'tmp')
       FileUtils.mkdir_p(tmp_dir)
-      output_path = File.join(tmp_dir,'subtitled.mp4')
+      @subtitled_path = File.join(tmp_dir,'subtitled.mp4')
     end
 
     @subtitled_path 
