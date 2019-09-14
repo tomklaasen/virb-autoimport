@@ -14,8 +14,10 @@ class FitThing
   include Logging
 
 
-  def initialize(file_path)
+  def initialize(basedir, file_path)
+    @basedir = basedir
     @gmetrix_file_path = file_path
+    @cache = Cache.new(basedir, "videos.json")
   end
 
   def generate_srt(start_time, duration, output_directory)
@@ -91,26 +93,25 @@ class FitThing
   end
 
   def creation_time
-    fit_file = Fit.load_file(@gmetrix_file_path)
-    records = fit_file.records
-    records.each do |r|
-        header = r.header
+    @cache.fetch_time("#{@gmetrix_file_path}.creation_time") do 
+      fit_file = Fit.load_file(@gmetrix_file_path)
+      records = fit_file.records
+      records.each do |r|
+          header = r.header
 
-        # Look for the GPS messages
-        if header[:header_type] == 0 && header[:message_type] == 0 && header[:local_message_type] == 0
-          utc_timestamp = r.content[:raw_time_created]
-          if utc_timestamp
-            # Apparently, 1989-12-31T00:00:00 is used as 0. That's 631065600 in the Unix epoch
-            unix_timestamp = 631065600 + utc_timestamp
-            return Time.at(unix_timestamp)
+          # Look for the GPS messages
+          if header[:header_type] == 0 && header[:message_type] == 0 && header[:local_message_type] == 0
+            utc_timestamp = r.content[:raw_time_created]
+            if utc_timestamp
+              # Apparently, 1989-12-31T00:00:00 is used as 0. That's 631065600 in the Unix epoch
+              unix_timestamp = 631065600 + utc_timestamp
+              return Time.at(unix_timestamp)
+            end
+
           end
-
-        end
+      end
+      return nil
     end
-    return nil
-
   end
 
 end
-
-# puts FitThing.new('sample data/2019-08-07-08-19-39.fit').creation_time

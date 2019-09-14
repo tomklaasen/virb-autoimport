@@ -45,7 +45,7 @@ class Main
       logger.info "Photo #{index + 1}/#{photos_count}: #{photopath}"
 
       Dir.glob(File.join(origin, '*.MP4')).each do |videopath|
-        video = Video.new(videopath, photopath, gmetrix_dir)
+        video = Video.new(origin, videopath, photopath, gmetrix_dir)
         video.process
       end
 

@@ -8,6 +8,7 @@ class Video
   include Logging
 
   require_relative 'exif_thing'
+  require_relative 'cache'
 
   # require 'exif'
   require 'ffprober'
@@ -15,10 +16,12 @@ class Video
   require 'fileutils'
   require 'mediainfo'
 
-  def initialize(videopath, photopath, gmetrix_dir)
+  def initialize(basedir, videopath, photopath, gmetrix_dir)
+    @basedir = basedir
     @videopath = videopath
     @photopath = photopath
     @gmetrix_dir = gmetrix_dir
+    @cache = Cache.new(basedir, "videos.json")
   end
 
   def process
@@ -42,7 +45,7 @@ class Video
 
       # Then, we generate the .srt file
       if gmetrix_file_path
-        @subtitles_path = FitThing.new(gmetrix_file_path).generate_srt(start_time, output_duration, output_dir) 
+        @subtitles_path = FitThing.new(@basedir, gmetrix_file_path).generate_srt(start_time, output_duration, output_dir) 
       end
 
       # Cut the video
@@ -59,7 +62,7 @@ class Video
   end
 
   def duration
-    video_stream.duration.to_i
+    @cache.fetch("#{@videopath}.duration") {video_stream.duration.to_i}
   end
 
   private
@@ -107,18 +110,15 @@ class Video
   end
 
   def video_creation_time
-    # File.birthtime(@videopath)
-    @video_creation_time = @video_creation_time || Time.at(MediaInfo.from(@videopath).video.encoded_date)
+    @cache.fetch_time("#{@videopath}.video_creation_time") {Time.at(MediaInfo.from(@videopath).video.encoded_date)}
   end
 
   def photo_creation_time
-    # File.birthtime(@photopath)
-    @photo_creation_time = @photo_creation_time || ExifThing.new(@photopath).creation_time
+    @cache.fetch_time("#{@photopath}.photo_creation_time"){ExifThing.new(@basedir, @photopath).creation_time}
   end
 
   def fit_creation_time(fit_file_path)
-    # File.birthtime(fit_file_path)
-    FitThing.new(fit_file_path).creation_time
+    @cache.fetch_time("#{fit_file_path}.fit_creation_time"){FitThing.new(@basedir, fit_file_path).creation_time}
   end
 
   def contains_photo?
@@ -169,5 +169,3 @@ class Video
   end
 
 end
-
-# puts Video.new('sample data/VIRB0782-2.MP4', 'sample data/VIRB0784.jpg', 'sample data').creation_time

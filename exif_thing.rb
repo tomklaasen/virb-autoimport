@@ -10,8 +10,10 @@ class ExifThing
 	require 'date'
 	require 'time'
 
-	def initialize(path)
+	def initialize(basedir, path)
+		@basedir = basedir
 		@path = path
+		@cache = Cache.new(basedir, "videos.json")
 	end
 
 	def get_data
@@ -25,10 +27,9 @@ class ExifThing
 	end
 
 	def creation_time
-		data = get_data
-		# puts data.date_time
-		parse data.date_time
+		@cache.fetch_time("#{@path}.creation_time") do		
+			parse get_data.date_time
+		end
 	end
 end
 
-# puts ExifThing.new('sample data/VIRB0784.jpg').creation_time
