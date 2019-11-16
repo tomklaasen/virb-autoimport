@@ -22,6 +22,7 @@ class Main
     ARGV.each do |arg|
       case arg
         when '--virb_path'     then next_arg = :virb_path
+        when '--loglevel'      then next_arg = :loglevel
       else
         if next_arg
           args[next_arg] = arg
@@ -29,6 +30,10 @@ class Main
         end
         next_arg = unflagged_args.first
       end
+    end
+
+    if args[:loglevel]
+      logger.level = args[:loglevel]
     end
 
     environment = args[:environment]
