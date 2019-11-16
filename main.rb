@@ -57,9 +57,7 @@ class Main
     end
 
     # Delete source files
-    puts "Do you want to delete the source files? [yN]"
-    do_delete = STDIN.gets.chomp
-    if ['y', "Y"].include?(do_delete)
+    if delete_source_files?
       # Delete source files
       Dir.glob(File.join(origin, '*')).each do |file|
         File.delete(file)
@@ -67,6 +65,15 @@ class Main
     end
   end
 
+  def delete_source_files?
+    resultstring = Settings.delete_source_files
+    if resultstring.nil?
+      puts "Do you want to delete the source files? [yN]"
+      resultstring = STDIN.gets.chomp
+    end
+    ['y', "Y"].include?(resultstring)
+  end
+  
   def virb_path
     Settings.virb_path
   end
