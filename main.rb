@@ -15,9 +15,29 @@ class Main
   require_relative 'fit_thing'
 
   def initialize
-    environment = ARGV[0] || 'production'
-    Config.load_and_set_settings(Config.setting_files("config", environment))
+    # Argument parser taken from accepted answer on https://stackoverflow.com/questions/26434923/parse-command-line-arguments-in-a-ruby-script
+    args = { :environment => 'production' } # Setting default values
+    unflagged_args = [ :environment ]       # Bare arguments (no flag)
+    next_arg = unflagged_args.first
+    ARGV.each do |arg|
+      case arg
+        when '--virb_path'     then next_arg = :virb_path
+      else
+        if next_arg
+          args[next_arg] = arg
+          unflagged_args.delete( next_arg )
+        end
+        next_arg = unflagged_args.first
+      end
+    end
+
+    environment = args[:environment]
     logger.debug "environment: #{environment}"
+
+    @virb_path = args[:virb_path]
+    Config.load_and_set_settings(Config.setting_files("config", environment))
+
+    logger.debug "virb_path is #{virb_path}"
   end
 
   def do_stuff
@@ -76,7 +96,7 @@ class Main
   end
   
   def virb_path
-    Settings.virb_path
+    @virb_path ||= Settings.virb_path
   end
 end
 
