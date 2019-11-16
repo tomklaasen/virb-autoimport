@@ -62,7 +62,9 @@ class Video
   end
 
   def duration
-    @cache.fetch("#{@videopath}.duration") {video_stream.duration.to_i}
+    result = @cache.fetch("#{@videopath}.duration") {video_stream.duration.to_i}
+    logger.debug "Video duration is #{result}"
+    result
   end
 
   private
@@ -110,11 +112,15 @@ class Video
   end
 
   def video_creation_time
-    @cache.fetch_time("#{@videopath}.video_creation_time") {Time.at(MediaInfo.from(@videopath).video.encoded_date)}
+    result = @cache.fetch_time("#{@videopath}.video_creation_time") {Time.at(MediaInfo.from(@videopath).video.encoded_date)}
+    logger.debug "Video creation time is #{result}"
+    result
   end
 
   def photo_creation_time
-    @cache.fetch_time("#{@photopath}.photo_creation_time"){ExifThing.new(@basedir, @photopath).creation_time}
+    result = @cache.fetch_time("#{@photopath}.photo_creation_time"){ExifThing.new(@basedir, @photopath).creation_time}
+    logger.debug "Photo creation time is #{result}"
+    result
   end
 
   def fit_creation_time(fit_file_path)
@@ -123,8 +129,10 @@ class Video
 
   def contains_photo?
     if photo_creation_time < video_creation_time
+      logger.debug "Video doesn't contain photo; photo was taken before start of video"
       return false
     elsif photo_creation_time > video_creation_time + self.duration.to_i
+      logger.debug "Video doesn't contain photo; photo was taken after end of video"
       return false
     else
       return true

@@ -23,12 +23,15 @@ class ExifThing
 	def parse(date_time)
 		date_time.sub!(':', '-')
 		date_time.sub!(':', '-')
-		Time.parse("#{date_time} +0200")
+		timezone = Time.now.strftime('%z')
+		logger.debug "Timezone is #{timezone}"
+		Time.parse("#{date_time} #{timezone}")
 	end
 
 	def creation_time
 		@cache.fetch_time("#{@path}.creation_time") do		
-			parse get_data.date_time
+			data = get_data
+			parse(data.date_time)
 		end
 	end
 end
