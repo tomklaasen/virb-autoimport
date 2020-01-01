@@ -48,7 +48,7 @@ class Main
   def do_stuff
     logger.debug "Duration:: #{Settings.duration}"
 
-    origin = File.join(virb_path, "DCIM/101_VIRB")
+    origin = File.join(virb_path, "DCIM/102_VIRB")
 
     # Delete all .glv files; we don't need those
     Dir.glob(File.join(origin, '*.glv')).each do |file|
