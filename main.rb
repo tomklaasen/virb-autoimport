@@ -48,45 +48,50 @@ class Main
   def do_stuff
     logger.debug "Duration:: #{Settings.duration}"
 
-    origin = File.join(virb_path, "DCIM/102_VIRB")
+    movie_dirs = ["101_VIRB", "102_VIRB"]
 
-    # Delete all .glv files; we don't need those
-    Dir.glob(File.join(origin, '*.glv')).each do |file|
-      File.delete(file)
-    end
+    movie_dirs.each do |movie_dir|
+      origin = File.join(virb_path, "DCIM/#{movie_dir}")
 
-    gmetrix_dir = File.join(virb_path, 'GMetrix')
 
-    photos_array = Dir.glob(File.join(origin, '*.jpg'))
-
-    photos_count = photos_array.count
-    logger.info "Processing #{photos_count} situations"
-
-    started_at = Time.now
-
-    # For each photo, find the video in which it is, and cut the relevant part
-    photos_array.each_with_index do |photopath, index|
-      logger.info "*****************************"
-      logger.info "Photo #{index + 1}/#{photos_count}: #{photopath}"
-
-      Dir.glob(File.join(origin, '*.MP4')).each do |videopath|
-        logger.debug("Processing video #{videopath}")
-        video = Video.new(origin, videopath, photopath, gmetrix_dir)
-        video.process
+      # Delete all .glv files; we don't need those
+      Dir.glob(File.join(origin, '*.glv')).each do |file|
+        File.delete(file)
       end
 
-      File.rename(photopath, "#{photopath}.processed")
+      gmetrix_dir = File.join(virb_path, 'GMetrix')
 
-      time_spent = Time.now - started_at
-      logger.info "Photo #{index + 1}/#{photos_count} processed. Time spent: #{time_spent}s (that's #{time_spent / (index +1)}s / photo)"
+      photos_array = Dir.glob(File.join(origin, '*.jpg'))
 
-    end
+      photos_count = photos_array.count
+      logger.info "Processing #{photos_count} situations"
 
-    # Delete source files
-    if delete_source_files?
+      started_at = Time.now
+
+      # For each photo, find the video in which it is, and cut the relevant part
+      photos_array.each_with_index do |photopath, index|
+        logger.info "*****************************"
+        logger.info "Photo #{index + 1}/#{photos_count}: #{photopath}"
+
+        Dir.glob(File.join(origin, '*.MP4')).each do |videopath|
+          logger.debug("Processing video #{videopath}")
+          video = Video.new(origin, videopath, photopath, gmetrix_dir)
+          video.process
+        end
+
+        File.rename(photopath, "#{photopath}.processed")
+
+        time_spent = Time.now - started_at
+        logger.info "Photo #{index + 1}/#{photos_count} processed. Time spent: #{time_spent}s (that's #{time_spent / (index +1)}s / photo)"
+
+      end
+
       # Delete source files
-      Dir.glob(File.join(origin, '*')).each do |file|
-        File.delete(file)
+      if delete_source_files?
+        # Delete source files
+        Dir.glob(File.join(origin, '*')).each do |file|
+          File.delete(file)
+        end
       end
     end
   end
