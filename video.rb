@@ -62,12 +62,23 @@ class Video
   end
 
   def duration
-    result = @cache.fetch("#{@videopath}.duration") {video_stream.duration.to_i}
-    logger.debug "Video duration is #{result}"
-    result
+    @cache.fetch("#{@videopath}.duration") {video_stream.duration.to_i}
+  end
+
+  def video_creation_time
+    @cache.fetch_time("#{@videopath}.video_creation_time") {Time.at(MediaInfo.from(@videopath).video.encoded_date)}
+  end
+
+  def photo_creation_time
+    @cache.fetch_time("#{@photopath}.photo_creation_time"){ExifThing.new(@basedir, @photopath).creation_time}
   end
 
   private
+
+  def fit_creation_time(fit_file_path)
+    @cache.fetch_time("#{fit_file_path}.fit_creation_time"){FitThing.new(@basedir, fit_file_path).creation_time}
+  end
+
 
   def add_subtitles(video_path)
     video = escape_path_for_command_line(video_path)
@@ -109,22 +120,6 @@ class Video
 
   def video_stream
     probe.video_streams[0]
-  end
-
-  def video_creation_time
-    result = @cache.fetch_time("#{@videopath}.video_creation_time") {Time.at(MediaInfo.from(@videopath).video.encoded_date)}
-    logger.debug "Video creation time is #{result}"
-    result
-  end
-
-  def photo_creation_time
-    result = @cache.fetch_time("#{@photopath}.photo_creation_time"){ExifThing.new(@basedir, @photopath).creation_time}
-    logger.debug "Photo creation time is #{result}"
-    result
-  end
-
-  def fit_creation_time(fit_file_path)
-    @cache.fetch_time("#{fit_file_path}.fit_creation_time"){FitThing.new(@basedir, fit_file_path).creation_time}
   end
 
   def contains_photo?

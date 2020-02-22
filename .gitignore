@@ -6,3 +6,4 @@ speeds.srt
 config/settings/*.local.yml
 Gemfile.lock
 sample data
+sample_data
