@@ -8,6 +8,7 @@ class Video
   include Logging
 
   require_relative 'exif_thing'
+  require_relative 'fit_thing'
   require_relative 'cache'
 
   # require 'exif'
@@ -73,11 +74,12 @@ class Video
     @cache.fetch_time("#{@photopath}.photo_creation_time"){ExifThing.new(@basedir, @photopath).creation_time}
   end
 
-  private
-
   def fit_creation_time(fit_file_path)
     @cache.fetch_time("#{fit_file_path}.fit_creation_time"){FitThing.new(@basedir, fit_file_path).creation_time}
   end
+
+  private
+
 
 
   def add_subtitles(video_path)
