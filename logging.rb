@@ -13,7 +13,6 @@ module Logging
   # Global, memoized, lazy initialized instance of a logger
   def self.logger
     unless @logger
-      File.join(output_dir, File.basename(@photopath, ".jpg"))
       @logger = Logger.new(File.join(Settings.output_dir), "virb_autoimport_#{Time.now.strftime("%Y-%m-%dT%k%M%S")}.log")
       @logger.level = Logger::INFO
     end
