@@ -4,6 +4,7 @@ module Logging
   require "bundler/setup"
 
   require 'logger'
+  require 'config'
 
   # This is the magical bit that gets mixed into your classes
   def logger
