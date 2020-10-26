@@ -32,15 +32,17 @@ class Main
       end
     end
 
+
+    environment = args[:environment]
+    Config.load_and_set_settings(Config.setting_files("config", environment))
+
     if args[:loglevel]
       logger.level = args[:loglevel]
     end
 
-    environment = args[:environment]
     logger.debug "environment: #{environment}"
 
     @virb_path = args[:virb_path]
-    Config.load_and_set_settings(Config.setting_files("config", environment))
 
     logger.debug "virb_path is #{virb_path}"
   end
