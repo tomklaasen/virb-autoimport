@@ -1,5 +1,5 @@
-output_dir: YOUR_OUTPUT_DIR # Output will be written in this directory
-virb_path: YOUR_INPUT_DIR   # Input files will be taken from this directory
+output_dir: tmp # Output will be written in this directory
+virb_path: sample_data   # Input files will be taken from this directory
 
 delete_source_files: N # Y to delete source files after processing,  N to not delete them; remove this line if you want to be prompted.
 

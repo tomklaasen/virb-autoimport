@@ -25,7 +25,8 @@ class ExifThing
 		date_time.sub!(':', '-')
 		timezone = Time.now.strftime('%z')
 		logger.debug "Timezone is #{timezone}"
-		Time.parse("#{date_time} #{timezone}")
+		#Time.parse("#{date_time} #{timezone}")
+		Time.parse("#{date_time} UTC")
 	end
 
 	def creation_time

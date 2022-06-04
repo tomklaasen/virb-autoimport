@@ -15,7 +15,7 @@ module Logging
   def self.logger
     unless @logger
       @logger = Logger.new(File.join(Settings.output_dir, "virb_autoimport_#{Time.now.strftime("%Y-%m-%dT%k%M%S")}.log"))
-      @logger.level = Logger::INFO
+      @logger.level = Logger::DEBUG
     end
     @logger
   end

@@ -126,10 +126,10 @@ class Video
 
   def contains_photo?
     if photo_creation_time < video_creation_time
-      logger.debug "Video doesn't contain photo; photo was taken before start of video"
+      logger.debug "Video doesn't contain photo; photo was taken at #{photo_creation_time}, before start of video (#{video_creation_time})"
       return false
     elsif photo_creation_time > video_creation_time + self.duration.to_i
-      logger.debug "Video doesn't contain photo; photo was taken after end of video"
+      logger.debug "Video doesn't contain photo; photo was taken at #{photo_creation_time}, after end of video (#{video_creation_time + self.duration.to_i})"
       return false
     else
       return true
