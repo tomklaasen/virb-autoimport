@@ -5,7 +5,7 @@ require "bundler/setup"
 require_relative '../exif_thing'
 require "test/unit"
 
-DIRECTORY = "sample_data/DCIM/102_VIRB"
+# DIRECTORY = "sample_data/DCIM/102_VIRB"
 
 class ExifThingTest < Test::Unit::TestCase
 	def test_nothing
@@ -16,6 +16,7 @@ class ExifThingTest < Test::Unit::TestCase
 		origin = DIRECTORY
 		photos_array = Dir.glob(File.join(origin, '*.jpg'))
 		photos_array.each_with_index do |photopath, index|
+			puts photopath
 			data = Exif::Data.new(IO.read(photopath))   # load from string
 			date_time = data.date_time
 			puts date_time
