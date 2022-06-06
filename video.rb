@@ -7,7 +7,6 @@ class Video
   require_relative 'logging'
   include Logging
 
-  require_relative 'exif_thing'
   require_relative 'fit_thing'
   require_relative 'cache'
 
