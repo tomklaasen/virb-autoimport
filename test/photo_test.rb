@@ -11,10 +11,10 @@ class PhotoTest < Test::Unit::TestCase
 	end
 
 	def teardown
-		Dir.foreach('tmp') do |f|
-		  fn = File.join('tmp', f)
-		  File.delete(fn) if f != '.' && f != '..'
-		end
+		# Dir.foreach('tmp') do |f|
+		#   fn = File.join('tmp', f)
+		#   File.delete(fn) if f != '.' && f != '..'
+		# end
 	end
 
 	def test_initialize

@@ -16,15 +16,11 @@ class ExifThingTest < Test::Unit::TestCase
 		origin = DIRECTORY
 		photos_array = Dir.glob(File.join(origin, '*.jpg'))
 		photos_array.each_with_index do |photopath, index|
-			puts photopath
 			data = Exif::Data.new(IO.read(photopath))   # load from string
 			date_time = data.date_time
-			puts date_time
 			date_time.sub!(':', '-')
 			date_time.sub!(':', '-')
 			timezone = Time.now.strftime('%z')
-			puts "Timezone is #{timezone}"
-			puts Time.parse("#{date_time} #{timezone}")
 		end
 
 	end

@@ -12,6 +12,7 @@ class Main
   include Logging
 
   require_relative 'video'
+  require_relative 'photo'
   require_relative 'fit_thing'
 
   def initialize
@@ -77,8 +78,9 @@ class Main
 
         Dir.glob(File.join(origin, '*.MP4')).each do |videopath|
           logger.debug("Processing video #{videopath}")
-          video = Video.new(origin, videopath, photopath, gmetrix_dir)
-          video.process
+          video = Video.new(origin, videopath, gmetrix_dir)
+          photo = Photo.new(photopath)
+          video.process(photo)
         end
 
         File.rename(photopath, "#{photopath}.processed")
