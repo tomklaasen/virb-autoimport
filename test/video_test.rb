@@ -7,6 +7,11 @@ require_relative '../logging'
 require "test/unit"
 
 class VideoTest < Test::Unit::TestCase
+
+	def setup
+		Config.load_and_set_settings(Config.setting_files("config", "test"))
+	end
+
 	def test_initialize
 		origin = "sample_data/DCIM/102_VIRB"
 		videopath = File.join(origin, "VIRB0659.MP4")
