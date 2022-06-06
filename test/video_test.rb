@@ -20,14 +20,6 @@ class VideoTest < Test::Unit::TestCase
 	end
 
 
-	def test_process
-		origin = "sample_data/DCIM/102_VIRB"
-		videopath = File.join(origin, "VIRB0667.MP4")
-		video = Video.new(origin, videopath, "sample_data/GMetrix")
-
-		photo = Photo.new(File.join(origin, "VIRB0668.jpg"))
-		video.process(photo)
-	end
 
 
 

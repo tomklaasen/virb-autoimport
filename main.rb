@@ -11,9 +11,7 @@ class Main
   require_relative 'logging'
   include Logging
 
-  require_relative 'video'
-  require_relative 'photo'
-  require_relative 'fit_thing'
+  require 'processor'
 
   def initialize
     # Argument parser taken from accepted answer on https://stackoverflow.com/questions/26434923/parse-command-line-arguments-in-a-ruby-script
@@ -49,55 +47,7 @@ class Main
   end
 
   def do_stuff
-    logger.debug "Duration:: #{Settings.duration}"
-
-    movie_dirs = ["101_VIRB", "102_VIRB"]
-
-    movie_dirs.each do |movie_dir|
-      origin = File.join(virb_path, "DCIM/#{movie_dir}")
-
-
-      # Delete all .glv files; we don't need those
-      Dir.glob(File.join(origin, '*.glv')).each do |file|
-        File.delete(file)
-      end
-
-      gmetrix_dir = File.join(virb_path, 'GMetrix')
-
-      photos_array = Dir.glob(File.join(origin, '*.jpg'))
-
-      photos_count = photos_array.count
-      logger.info "Processing #{photos_count} situations"
-
-      started_at = Time.now
-
-      # For each photo, find the video in which it is, and cut the relevant part
-      photos_array.each_with_index do |photopath, index|
-        logger.info "*****************************"
-        logger.info "Photo #{index + 1}/#{photos_count}: #{photopath}"
-
-        Dir.glob(File.join(origin, '*.MP4')).each do |videopath|
-          logger.debug("Processing video #{videopath}")
-          video = Video.new(origin, videopath, gmetrix_dir)
-          photo = Photo.new(photopath)
-          video.process(photo)
-        end
-
-        File.rename(photopath, "#{photopath}.processed")
-
-        time_spent = Time.now - started_at
-        logger.info "Photo #{index + 1}/#{photos_count} processed. Time spent: #{time_spent}s (that's #{time_spent / (index +1)}s / photo)"
-
-      end
-
-      # Delete source files
-      if delete_source_files?
-        # Delete source files
-        Dir.glob(File.join(origin, '*')).each do |file|
-          File.delete(file)
-        end
-      end
-    end
+    Processor.new.process(Settings.virb_path, Settings.output_dir, Settings.duration, Settings.leadtime, delete_source_files?)
   end
 
   def delete_source_files?
@@ -109,9 +59,6 @@ class Main
     ['y', "Y"].include?(resultstring)
   end
   
-  def virb_path
-    @virb_path ||= Settings.virb_path
-  end
 end
 
 Main.new.do_stuff
