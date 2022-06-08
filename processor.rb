@@ -30,6 +30,8 @@ class Processor
 
 			photos_array = Dir.glob(File.join(origin, '*.jpg'))
 
+			photos_array.reject!{|name| name.end_with?("_processed.jpg")}
+
 			photos_count = photos_array.count
 			logger.info "Processing #{photos_count} situations"
 
@@ -48,7 +50,7 @@ class Processor
 				  video.process(photo, output_dir, duration, leadtime)
 				end
 
-				File.rename(photopath, "#{photopath}.processed")
+				File.rename(photopath, "#{photopath[0...-4]}_processed.jpg")
 
 				time_spent = Time.now - started_at
 				logger.info "Photo #{index + 1}/#{photos_count} processed. Time spent: #{time_spent}s (that's #{time_spent / (index +1)}s / photo)"
